@@ -1,3 +1,5 @@
+#author: Dikran Kahiaian
+#Main window of the game
 from ai import *
 from utils import *
 import pygame

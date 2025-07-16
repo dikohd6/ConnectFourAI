@@ -1,3 +1,6 @@
+#author: Dikran Kahiaian
+#helper methods for the game
+
 
 # Constants
 ROW_COUNT = 6
