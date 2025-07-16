@@ -1,6 +1,9 @@
+from ai import *
+from utils import *
 import pygame
 import sys
 import random
+
 # Initialize Pygame
 pygame.init()
 
@@ -44,45 +47,10 @@ def draw_board():
             elif board[row][col] == 2:
                 pygame.draw.circle(screen, YELLOW, (col*SQUARESIZE + SQUARESIZE//2, (row+1)*SQUARESIZE + SQUARESIZE//2), RADIUS)
 
-def get_next_open_row(col):
-    for row in reversed(range(ROW_COUNT)):
-        if board[row][col] == 0:
-            return row
-    return None  # Column full
-
-def is_valid_column(col):
-    return board[0][col] == 0
-
 def draw_text(text, color, x, y):
     img = text_font.render(text, True, color)
     screen.blit(img, (x, y))
 
-def check_win(board, piece):
-    # Horizontal check
-    for row in range(ROW_COUNT):
-        for col in range(COL_COUNT - 3):
-            if all(board[row][col+i] == piece for i in range(4)):
-                return True
-
-    # Vertical check
-    for col in range(COL_COUNT):
-        for row in range(ROW_COUNT - 3):
-            if all(board[row+i][col] == piece for i in range(4)):
-                return True
-
-    # Positive diagonal (/)
-    for row in range(ROW_COUNT - 3):
-        for col in range(COL_COUNT - 3):
-            if all(board[row+i][col+i] == piece for i in range(4)):
-                return True
-
-    # Negative diagonal (\)
-    for row in range(3, ROW_COUNT):
-        for col in range(COL_COUNT - 3):
-            if all(board[row-i][col+i] == piece for i in range(4)):
-                return True
-
-    return False
 
 # Game loop
 running = True
@@ -110,19 +78,17 @@ while running:
                     x_pos = event.pos[0]
                     col = x_pos // SQUARESIZE
 
-                    if is_valid_column(col):
-                        row = get_next_open_row(col)
+                    if is_valid_column(board, col):
+                        row = get_next_open_row(board, col)
                         board[row][col] = 1
                         TURN = 1  # Switch to AI
 
             # AI turn (simple random AI)
             elif TURN == 1:
                 pygame.time.wait(500)  # Small delay to simulate thinking
-                valid_cols = [c for c in range(COL_COUNT) if is_valid_column(c)]
+                valid_cols = [c for c in range(COL_COUNT) if is_valid_column(board, c)]
                 if valid_cols:
-                    col = random.choice(valid_cols)
-                    row = get_next_open_row(col)
-                    board[row][col] = 2
+                    best_move(board)
                 TURN = 0  # Switch back to human
 
 pygame.quit()
